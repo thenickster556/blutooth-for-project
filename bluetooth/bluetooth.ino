@@ -169,12 +169,12 @@ void messageChecking()
         delay(5000);
         ESP_BT.print("Finished Dispensing");
       }
-      else if(incoming.toInt()==SAVE){
-        Serial.println("sending Ready");
-        ESP_BT.print("Ready");
-        Serial.println("Ready");
+//      else if(incoming.toInt()==SAVE){
+//        Serial.println("sending Ready");
+//        ESP_BT.print("Ready");
+//        Serial.println("Ready");
 //        save=true;
-      }
+//      }
 //       else if(incoming.toInt()==LOAD){
 //        String hey =Load();
 //        Serial.println("Loading: "+ hey);
