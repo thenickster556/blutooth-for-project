@@ -11,7 +11,7 @@
 #define EEPROM_SIZE 128
 
 BluetoothSerial ESP_BT; //Object for Bluetooth
-const int LEFT=22,RIGHT=23,RIGHT2=2323,DISPENSE=24, SAVE=25,LOAD =26;
+const int LEFT=22,RIGHT=23,RIGHT2=2323,DISPENSE=24, SAVE=25,LOAD =26,STOP=13;
 bool save=false;
 const String DELIMITER = "*";
 String incoming;
@@ -148,6 +148,9 @@ void messageChecking()
       }
       else if(incoming.toInt()==DISPENSE){
         ESP_BT.print("Finished Dispensing");
+      }
+      else if(incoming.toInt()==STOP){
+        ESP_BT.print("Stopped");
       }
   }
     
