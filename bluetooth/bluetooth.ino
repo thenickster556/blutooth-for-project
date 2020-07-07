@@ -147,8 +147,6 @@ void messageChecking()
         ESP_BT.print("Moving Right*2");
       }
       else if(incoming.toInt()==DISPENSE){
-        ESP_BT.print("Dispensing");
-        delay(5000);
         ESP_BT.print("Finished Dispensing");
       }
   }
