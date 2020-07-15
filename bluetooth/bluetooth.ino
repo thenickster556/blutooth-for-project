@@ -8,12 +8,12 @@
 #include "esp_bt_device.h"
 //#include "driver/include/driver/uart.h"
 
-#define EEPROM_SIZE 128
+#define EEPROM_SIZE 1024
 
 BluetoothSerial ESP_BT; //Object for Bluetooth
 const int LEFT=1,RIGHT=2,RIGHT2=2323,DISPENSE=3, SAVE=25,LOAD =26,STOP=7;
 bool save = false;
-const String DELIMITER = "*";
+const String DELIMITER = "*",EMPTY ="EPROM is empty";
 String incoming;
 int LED_BUILTIN = 32;
 int stillWaiting =2;//Paired or not
@@ -102,56 +102,50 @@ void messageChecking()
     Serial.println(results.value,HEX);
     irrecv.resume();
   }
-  if(!save){
 //  Serial.println("reading "+digitalRead(photoEmit));
-    if (ESP_BT.available()) //Check if we receive anything from Bluetooth
-    {
-      
-      incoming = ESP_BT.readString(); //Read what we recievive 
-      Serial.print("Received:");
-      Serial.println(incoming);
-      if(incoming.toInt()==LEFT){
-        ESP_BT.print("Moving Left");
+  if (ESP_BT.available()) //Check if we receive anything from Bluetooth
+  {
+    
+    incoming = ESP_BT.readString(); //Read what we recievive 
+    Serial.print("Received:");
+    Serial.println(incoming);
+    if(incoming.toInt()==LEFT){
+      ESP_BT.print("Moving Left");
+    }
+    else if(incoming.toInt()==RIGHT){
+      ESP_BT.print("Moving Right");
+    }
+    else if(incoming.toInt()==RIGHT2){
+      ESP_BT.print("Moving Right*2");
+    }
+    else if(incoming.toInt()==DISPENSE){
+      ESP_BT.print("Finished Dispensing");
+    }
+    else if(incoming.toInt()==STOP){
+      ESP_BT.print("Stopped");
+    }
+    else if(incoming.toInt()==SAVE){
+//      Serial.println("sending Ready");
+      ESP_BT.print("Ready");
+      Serial.println("Ready");
+      save=true;
+    }
+    else if(incoming.indexOf(DELIMITER)>0){
+      Serial.println("in saved state");
+      Save(incoming); //Read what we recievive 
+      ESP_BT.print("Saved");
+    }
+     else if(incoming.toInt()==LOAD){
+      String hey =Load();
+      Serial.println("Loading: "+ hey);
+      if(hey.equals("")){
+//        Serial.println(EMPTY);
+        ESP_BT.print(EMPTY);
       }
-      else if(incoming.toInt()==RIGHT){
-        ESP_BT.print("Moving Right");
+      else{
+        ESP_BT.print(hey);
       }
-      else if(incoming.toInt()==RIGHT2){
-        ESP_BT.print("Moving Right*2");
-      }
-      else if(incoming.toInt()==DISPENSE){
-        ESP_BT.print("Finished Dispensing");
-      }
-      else if(incoming.toInt()==STOP){
-        ESP_BT.print("Stopped");
-      }
-      else if(incoming.toInt()==SAVE){
-        Serial.println("sending Ready");
-        ESP_BT.print("Ready");
-        Serial.println("Ready");
-        save=true;
-      }
-       else if(incoming.toInt()==LOAD){
-        String hey =Load();
-        Serial.println("Loading: "+ hey);
-        if(hey.equals("")){
-          ESP_BT.print(DELIMITER);
-        }
-        else{
-          ESP_BT.print(hey);
-        }
-      }
-  }
-  else{
-     if (ESP_BT.available()) //Check if we receive anything from Bluetooth
-     {
-        Serial.println("in saved state");
-        Save(ESP_BT.readString()); //Read what we recievive 
-        ESP_BT.print("Saved");
-        save=false;
-     }
-  
-  }
+    }
     
   }
   delay(100);
@@ -159,17 +153,17 @@ void messageChecking()
 void Save(String saveData){
   int addr=0;
   Serial.println("init save");
-  int len = saveData.length()+1;
+  int len = saveData.length()+1;//idk why i habe the plus 1
   char buff[len];
   saveData.toCharArray(buff,len);
   Serial.print("Data to save:");
   Serial.println(saveData);
   // writing byte-by-byte to EEPROM
     for (int i = 0; i < len; i++) {
+        Serial.print(buff[i]);
         EEPROM.write(addr, buff[i]);
         addr += 1;
     }
-    EEPROM.commit();
 }
 String Load(){
   String buff ="";
