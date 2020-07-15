@@ -11,8 +11,8 @@
 #define EEPROM_SIZE 128
 
 BluetoothSerial ESP_BT; //Object for Bluetooth
-const int LEFT=22,RIGHT=23,RIGHT2=2323,DISPENSE=24, SAVE=25,LOAD =26,STOP=13;
-bool save=false;
+const int LEFT=1,RIGHT=2,RIGHT2=2323,DISPENSE=3, SAVE=25,LOAD =26,STOP=7;
+bool save = false;
 const String DELIMITER = "*";
 String incoming;
 int LED_BUILTIN = 32;
@@ -57,7 +57,7 @@ void setup() {
   // initialize EEPROM with predefined size
   EEPROM.begin(EEPROM_SIZE);
   
-  ESP_BT.begin("ESP32_LED_Control"); //Name of your Bluetooth Signal
+  ESP_BT.begin("ESP32"); //Name of your Bluetooth Signal
   Serial.println("Bluetooth Device is Ready to Pair");
   pinMode (LED_BUILTIN, OUTPUT);//Specify that LED pin is output
 //  pairing light setup
@@ -110,34 +110,34 @@ void messageChecking()
       incoming = ESP_BT.readString(); //Read what we recievive 
       Serial.print("Received:");
       Serial.println(incoming);
-      if (incoming.toInt() == 1)
-      {
-          digitalWrite(LED_BUILTIN, HIGH);
-          ESP_BT.print("LED turned ON");
-      }
-          
-      else if (incoming.toInt()== 0)
-      {
-          digitalWrite(LED_BUILTIN, LOW);
-          ESP_BT.print("LED turned OFF");
-      }
-      else if(incoming.toInt() == 2){
-        digitalWrite(irPower,HIGH);
-        ESP_BT.print("IR turned ON");     
-      }
-      else if(incoming.toInt() == 3){
-        digitalWrite(irPower,LOW);
-        ESP_BT.print("IR turned OFF");     
-      }
-      else if(incoming.toInt() == 4){
-        digitalWrite(photoPower,HIGH);
-        ESP_BT.print("Photoresistor turned ON");     
-      }
-      else if(incoming.toInt() == 5){
-        digitalWrite(photoPower,LOW);
-        ESP_BT.print("Photoresistor turned OFF");     
-      }
-      else if(incoming.toInt()==LEFT){
+//      if (incoming.toInt() == 1)
+//      {
+//          digitalWrite(LED_BUILTIN, HIGH);
+//          ESP_BT.print("LED turned ON");
+//      }
+//          
+//      else if (incoming.toInt()== 0)
+//      {
+//          digitalWrite(LED_BUILTIN, LOW);
+//          ESP_BT.print("LED turned OFF");
+//      }
+//      else if(incoming.toInt() == 2){
+//        digitalWrite(irPower,HIGH);
+//        ESP_BT.print("IR turned ON");     
+//      }
+//      else if(incoming.toInt() == 3){
+//        digitalWrite(irPower,LOW);
+//        ESP_BT.print("IR turned OFF");     
+//      }
+//      else if(incoming.toInt() == 4){
+//        digitalWrite(photoPower,HIGH);
+//        ESP_BT.print("Photoresistor turned ON");     
+//      }
+//      else if(incoming.toInt() == 5){
+//        digitalWrite(photoPower,LOW);
+//        ESP_BT.print("Photoresistor turned OFF");     
+//      }
+      if(incoming.toInt()==LEFT){
         ESP_BT.print("Moving Left");
       }
       else if(incoming.toInt()==RIGHT){
