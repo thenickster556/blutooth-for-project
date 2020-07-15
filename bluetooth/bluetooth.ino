@@ -11,8 +11,8 @@
 #define EEPROM_SIZE 128
 
 BluetoothSerial ESP_BT; //Object for Bluetooth
-const int LEFT=22,RIGHT=23,RIGHT2=2323,DISPENSE=24, SAVE=25,LOAD =26;
-bool save=false;
+const int LEFT=1,RIGHT=2,RIGHT2=2323,DISPENSE=3, SAVE=25,LOAD =26,STOP=7;
+bool save = false;
 const String DELIMITER = "*";
 String incoming;
 int LED_BUILTIN = 32;
@@ -57,7 +57,7 @@ void setup() {
   // initialize EEPROM with predefined size
   EEPROM.begin(EEPROM_SIZE);
   
-  ESP_BT.begin("ESP32_LED_Control"); //Name of your Bluetooth Signal
+  ESP_BT.begin("ESP32"); //Name of your Bluetooth Signal
   Serial.println("Bluetooth Device is Ready to Pair");
   pinMode (LED_BUILTIN, OUTPUT);//Specify that LED pin is output
 //  pairing light setup
@@ -79,7 +79,6 @@ void setup() {
 //  irrecv1.enableIRIn();
 //  irrecv2.enableIRIn();
   
-
 
   
 }
@@ -121,9 +120,10 @@ void messageChecking()
         ESP_BT.print("Moving Right*2");
       }
       else if(incoming.toInt()==DISPENSE){
-        ESP_BT.print("Dispensing");
-        delay(5000);
         ESP_BT.print("Finished Dispensing");
+      }
+      else if(incoming.toInt()==STOP){
+        ESP_BT.print("Stopped");
       }
       else if(incoming.toInt()==SAVE){
         Serial.println("sending Ready");
