@@ -12,8 +12,8 @@
 
 BluetoothSerial ESP_BT; //Object for Bluetooth
 const int LEFT=22,RIGHT=23,RIGHT2=2323,DISPENSE=24, SAVE=25,LOAD =26;
-//bool save=false;
-//const String DELIMITER = "*";
+bool save=false;
+const String DELIMITER = "*";
 String incoming;
 int LED_BUILTIN = 32;
 int stillWaiting =2;//Paired or not
@@ -80,24 +80,7 @@ void setup() {
 //  irrecv2.enableIRIn();
   
 
-//  uart_config_t uart_config = {
-//    .baud_rate = 9600,
-//    .data_bits = UART_DATA_8_BITS,
-//    .parity = UART_PARITY_DISABLE,
-//    .stop_bits = UART_STOP_BITS_1,
-//    .flow_ctrl = UART_HW_FLOWCTRL_CTS_RTS,
-//    .rx_flow_ctrl_thresh = 122,
-//  };
-//
-//  // Configure UART parameters
-//  ESP_ERROR_CHECK(uart_param_config(uart_num, &uart_config));
-//  
-//   // Setup UART buffered IO with event queue
-//  const int uart_buffer_size = (1024 * 2);
-//  QueueHandle_t uart_queue;
-//  // Install UART driver using an event queue here
-//  ESP_ERROR_CHECK(uart_driver_install(uart_num, uart_buffer_size, \
-//                                          uart_buffer_size, 10, &uart_queue, 0));
+
   
 }
 void loop() {
@@ -120,7 +103,7 @@ void messageChecking()
     Serial.println(results.value,HEX);
     irrecv.resume();
   }
-//  if(!save){
+  if(!save){
 //  Serial.println("reading "+digitalRead(photoEmit));
     if (ESP_BT.available()) //Check if we receive anything from Bluetooth
     {
@@ -128,34 +111,7 @@ void messageChecking()
       incoming = ESP_BT.readString(); //Read what we recievive 
       Serial.print("Received:");
       Serial.println(incoming);
-      if (incoming.toInt() == 1)
-      {
-          digitalWrite(LED_BUILTIN, HIGH);
-          ESP_BT.print("LED turned ON");
-      }
-          
-      else if (incoming.toInt()== 0)
-      {
-          digitalWrite(LED_BUILTIN, LOW);
-          ESP_BT.print("LED turned OFF");
-      }
-      else if(incoming.toInt() == 2){
-        digitalWrite(irPower,HIGH);
-        ESP_BT.print("IR turned ON");     
-      }
-      else if(incoming.toInt() == 3){
-        digitalWrite(irPower,LOW);
-        ESP_BT.print("IR turned OFF");     
-      }
-      else if(incoming.toInt() == 4){
-        digitalWrite(photoPower,HIGH);
-        ESP_BT.print("Photoresistor turned ON");     
-      }
-      else if(incoming.toInt() == 5){
-        digitalWrite(photoPower,LOW);
-        ESP_BT.print("Photoresistor turned OFF");     
-      }
-      else if(incoming.toInt()==LEFT){
+      if(incoming.toInt()==LEFT){
         ESP_BT.print("Moving Left");
       }
       else if(incoming.toInt()==RIGHT){
@@ -169,178 +125,68 @@ void messageChecking()
         delay(5000);
         ESP_BT.print("Finished Dispensing");
       }
-//      else if(incoming.toInt()==SAVE){
-//        Serial.println("sending Ready");
-//        ESP_BT.print("Ready");
-//        Serial.println("Ready");
-//        save=true;
-//      }
-//       else if(incoming.toInt()==LOAD){
-//        String hey =Load();
-//        Serial.println("Loading: "+ hey);
-//        if(hey.equals("")){
-//          ESP_BT.print(DELIMITER);
-//        }
-//        else{
-//          ESP_BT.print(hey);
-//        }
-//      }
-//  }
-//  else{
-//     if (ESP_BT.available()) //Check if we receive anything from Bluetooth
-//     {
-//        Serial.println("in saved state");
-//        Save(ESP_BT.readString()); //Read what we recievive 
-//        ESP_BT.print("Saved");
-//        save=false;
-//     }
-//  
-//  }
+      else if(incoming.toInt()==SAVE){
+        Serial.println("sending Ready");
+        ESP_BT.print("Ready");
+        Serial.println("Ready");
+        save=true;
+      }
+       else if(incoming.toInt()==LOAD){
+        String hey =Load();
+        Serial.println("Loading: "+ hey);
+        if(hey.equals("")){
+          ESP_BT.print(DELIMITER);
+        }
+        else{
+          ESP_BT.print(hey);
+        }
+      }
+  }
+  else{
+     if (ESP_BT.available()) //Check if we receive anything from Bluetooth
+     {
+        Serial.println("in saved state");
+        Save(ESP_BT.readString()); //Read what we recievive 
+        ESP_BT.print("Saved");
+        save=false;
+     }
+  
+  }
     
-//    else if(incoming.toInt() == 7){
-//      spiceLevel(0);
-//    }
-//    else if(incoming.toInt() == 8){
-//      spiceLevel(1);
-//    }
-//    else if(incoming.toInt() == 9){
-//      spiceLevel(2);
-//    }
-//    else if(incoming.toInt() == 10){
-//      spiceLevel(3);
-//    }
-
   }
   delay(100);
 }
-//void Save(String saveData){
-//  int addr=0;
-//  Serial.println("init save");
-//  int len = saveData.length()+1;
-//  char buff[len];
-//  saveData.toCharArray(buff,len);
-//  Serial.print("Data to save:");
-//  Serial.println(saveData);
-//  // writing byte-by-byte to EEPROM
-//    for (int i = 0; i < len; i++) {
-//        EEPROM.write(addr, buff[i]);
-//        addr += 1;
-//    }
-//    EEPROM.commit();
-//}
-//String Load(){
-//  String buff ="";
-//  Serial.println("About to load");
-//  // reading byte-by-byte from EEPROM
-//    for (int i = 0; i < EEPROM_SIZE; i++) {
-//        byte readValue = EEPROM.read(i);
-//        if (readValue == 255) {
-//            break;
-//        }
-//
-//        buff+=char(readValue);
-////        char readValueChar = char(readValue);
-//    }
-//    Serial.println("data in eprom: "+buff);
-//    delay(100);
-//    return buff;
-//}
-void spiceLevel(int num)
-{
-  int percent = 100;
-  switch(num){
-    case 0:
-    break;
-    
-    case 1:
-    // checking if first ir sensor is crossed
-    digitalWrite(photoPower,HIGH);
-    digitalWrite(irPower,HIGH);
-    for(int i=0;i<20;i++){
-      if(irrecv.decode(&results)){
-        Serial.println("first photo resister read");
-        percent-=25;
-        irrecv.resume();
-        break;
-      }
+void Save(String saveData){
+  int addr=0;
+  Serial.println("init save");
+  int len = saveData.length()+1;
+  char buff[len];
+  saveData.toCharArray(buff,len);
+  Serial.print("Data to save:");
+  Serial.println(saveData);
+  // writing byte-by-byte to EEPROM
+    for (int i = 0; i < len; i++) {
+        EEPROM.write(addr, buff[i]);
+        addr += 1;
     }
-    digitalWrite(photoPower,LOW);
-    digitalWrite(irPower,LOW);
-    digitalWrite(photoEmit,LOW);
-    break;
-    
-    case 2:
-    // checking if first ir sensor is crossed
-    digitalWrite(photoPower,HIGH);
-    digitalWrite(irPower,HIGH);
-    if(irrecv.decode(&results)){
-      Serial.println("first photo resister read");
-      percent-=25;
-      irrecv.resume();
-    }
-    digitalWrite(photoPower,LOW);
-    digitalWrite(irPower,LOW);
-    
-    // checking if second ir sensor is crossed
-    digitalWrite(pP1,HIGH);
-    digitalWrite(iRP1,HIGH);
-    if(irrecv1.decode(&results)){
-      Serial.println("Second photo resister read");
-      percent-=25;
-      irrecv.resume();
-    }
-    digitalWrite(pP1,LOW);
-    digitalWrite(iRP1,LOW);
-    break;
+    EEPROM.commit();
+}
+String Load(){
+  String buff ="";
+  Serial.println("About to load");
+  // reading byte-by-byte from EEPROM
+    for (int i = 0; i < EEPROM_SIZE; i++) {
+        byte readValue = EEPROM.read(i);
+        if (readValue == 255) {
+            break;
+        }
 
-    case 3:
-    // checking if first ir sensor is crossed
-    digitalWrite(photoPower,HIGH);
-    digitalWrite(irPower,HIGH);
-    if(irrecv.decode(&results)){
-      Serial.println("first photo resister read");
-      percent-=25;
-      irrecv.resume();
+        buff+=char(readValue);
+//        char readValueChar = char(readValue);
     }
-    digitalWrite(photoPower,LOW);
-    digitalWrite(irPower,LOW);
-    
-    // checking if second ir sensor is crossed
-    digitalWrite(pP1,HIGH);
-    digitalWrite(iRP1,HIGH);
-    if(irrecv1.decode(&results)){
-      Serial.println("Second photo resister read");
-      percent-=25;
-      irrecv.resume();
-    }
-    digitalWrite(pP1,LOW);
-    digitalWrite(iRP1,LOW);
-
-    // checking if third ir sensor is crossed
-    digitalWrite(pP2,HIGH);
-    digitalWrite(iRP2,HIGH);
-    if(irrecv2.decode(&results)){
-      Serial.println("Second photo resister read");
-      percent-=25;
-      irrecv.resume();
-    }
-    digitalWrite(pP2,LOW);
-    digitalWrite(iRP2,LOW);
-    break;
-    
-    default: 
-    break;
-    
-  }
-  if(percent==25){
-    ESP_BT.print(percent);
-    ESP_BT.println("% remaining, consider replacing soon");
-  }
-  else{
-    ESP_BT.print(percent);
-    ESP_BT.print("% remaining");
-  }
-  Serial.println(percent);
+    Serial.println("data in eprom: "+buff);
+    delay(100);
+    return buff;
 }
 
 void pairedBlinking()
@@ -363,18 +209,5 @@ void pairedBlinking()
       }
       waitingLED = !waitingLED;
       delay(500);
-  }
-}
-void readUart(){
-  // Read data from UART.
-//  const int uart_num = UART2;
-char data_rcvd=0x00;
- if (Serial.available()) {
-     data_rcvd = Serial.read();   // read one byte from serial buffer and save to data_rcvd
-     Serial.println("Daat reieved");
- }
-  if(data_rcvd == 0x55){
-    digitalWrite(LED_BUILTIN, HIGH);
-    ESP_BT.println("LED turned ON");
   }
 }
