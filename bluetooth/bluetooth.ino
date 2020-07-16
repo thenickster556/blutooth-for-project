@@ -110,33 +110,7 @@ void messageChecking()
       incoming = ESP_BT.readString(); //Read what we recievive 
       Serial.print("Received:");
       Serial.println(incoming);
-//      if (incoming.toInt() == 1)
-//      {
-//          digitalWrite(LED_BUILTIN, HIGH);
-//          ESP_BT.print("LED turned ON");
-//      }
-//          
-//      else if (incoming.toInt()== 0)
-//      {
-//          digitalWrite(LED_BUILTIN, LOW);
-//          ESP_BT.print("LED turned OFF");
-//      }
-//      else if(incoming.toInt() == 2){
-//        digitalWrite(irPower,HIGH);
-//        ESP_BT.print("IR turned ON");     
-//      }
-//      else if(incoming.toInt() == 3){
-//        digitalWrite(irPower,LOW);
-//        ESP_BT.print("IR turned OFF");     
-//      }
-//      else if(incoming.toInt() == 4){
-//        digitalWrite(photoPower,HIGH);
-//        ESP_BT.print("Photoresistor turned ON");     
-//      }
-//      else if(incoming.toInt() == 5){
-//        digitalWrite(photoPower,LOW);
-//        ESP_BT.print("Photoresistor turned OFF");     
-//      }
+      
       if(incoming.toInt()==LEFT){
         ESP_BT.print("Moving Left");
       }
@@ -154,18 +128,7 @@ void messageChecking()
       }
   }
     
-//    else if(incoming.toInt() == 7){
-//      spiceLevel(0);
-//    }
-//    else if(incoming.toInt() == 8){
-//      spiceLevel(1);
-//    }
-//    else if(incoming.toInt() == 9){
-//      spiceLevel(2);
-//    }
-//    else if(incoming.toInt() == 10){
-//      spiceLevel(3);
-//    }
+
 
   }
   delay(100);
