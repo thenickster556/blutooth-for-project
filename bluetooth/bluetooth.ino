@@ -165,9 +165,7 @@ void Save(String saveData){
         addr += 1;
     }
     
-    EEPROM.write(addr,92);//so it keeps track of the length this is "\"
-    EEPROM.write(addr+1,110);
-    EEPROM.write(addr+2,255);
+    EEPROM.write(addr,255);//so it keeps track of the length this is "\"
 }
 String Load(){
   // reading byte-by-byte from EEPROM
