@@ -164,10 +164,14 @@ void Save(String saveData){
         EEPROM.write(addr, buff[i]);
         addr += 1;
     }
-    EEPROM.write(addr,255);//so it keeps track of the length
+    
+    EEPROM.write(addr,92);//so it keeps track of the length this is "\"
+    EEPROM.write(addr+1,110);
+    EEPROM.write(addr+2,255);
 }
 String Load(){
   // reading byte-by-byte from EEPROM
+    String buff="";
     for (int i = 0; i < EEPROM_SIZE; i++) {
         byte readValue = EEPROM.read(i);
         if (readValue == 255) {
@@ -177,7 +181,7 @@ String Load(){
         buff+=char(readValue);
 //        char readValueChar = char(readValue);
     }
-    Serial.println("data in eprom: "+buff);
+//    Serial.println("data in eprom: "+buff);
     delay(100);
     return buff;
 }
